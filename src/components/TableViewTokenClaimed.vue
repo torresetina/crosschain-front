@@ -2,7 +2,7 @@
 
   <div class="outer">
     <div class="table">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" >
         <el-table-column type="expand">
           <template #default="props">
             <div m="4">
@@ -14,25 +14,28 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="timestamp" label="Timestamp" />
+        <el-table-column prop="timestamp" label="Timestamp"  />
         <el-table-column prop="amountOut" label="AmountOut" />
-        <el-table-column prop="chainName" label="Tag" />
+        <el-table-column prop="chainName" label="Tag" width="110" fixed="right" />
       </el-table>
     </div>
+
+    <el-pagination small layout="prev, pager, next" :total="count" v-model:current-page="currentPage" @update:current-page="onSubmit"/>
+
     <div class="qform">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="Sender">
-          <el-input v-model="formInline.user" placeholder="Sender" clearable />
+        <el-form-item label="Destination">
+          <el-input v-model="formInline.destination" placeholder="Destination" clearable />
         </el-form-item>
         <el-form-item label="Tag">
-          <el-select v-model="formInline.region" placeholder="Tag" clearable>
+          <el-select v-model="formInline.tag" placeholder="Tag" clearable>
             <el-option label="mango" value="mango" />
             <el-option label="sui" value="sui" />
             <el-option label="bsc" value="bsc" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Activity time">
-          <el-date-picker v-model="formInline.date" type="datetimerange" placeholder="Pick a date" clearable />
+        <el-form-item label="Date range">
+          <el-date-picker v-model="formInline.date" type="daterange" placeholder="Pick a date" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">Query</el-button>
@@ -45,20 +48,33 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import httpRequest from '@/axios';
+import { onMounted, reactive, ref, type Ref } from 'vue';
+const currentPage = ref(1)
+const count = ref(10)
 
+const loading = ref(false)
 
 const formInline = reactive({
-  user: '',
-  region: '',
+  destination: '',
+  tag: '',
   date: '',
+  currentPage
 })
 
-const onSubmit = () => {
-  console.log('submit!')
+onMounted(()=> {
+  onSubmit()
+})
+
+
+interface RetMap {
+  currentPage: number
+  total: number
+  data: TokenClaimed[]
 }
 
-interface User {
+
+interface TokenClaimed {
   timestamp: string
   amountOut: number
   fromToken: string
@@ -70,48 +86,21 @@ interface User {
 }
 
 
-const tableData: User[] = [
-  {
-    timestamp: '1715929285',
-    amountOut: 9,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    bridgeHash: 'somebridgehashheresomebridgehashghere',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe'
-  },
-  {
-    timestamp: '1715929285',
-    amountOut: 9,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    bridgeHash: 'somebridgehashheresomebridgehashghere',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe'
-  },
-  {
-    timestamp: '1715929285',
-    amountOut: 9,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    bridgeHash: 'somebridgehashheresomebridgehashghere',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe'
-  },
-  {
-    timestamp: '1715929285',
-    amountOut: 0,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    bridgeHash: 'somebridgehashheresomebridgehashghere',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe'
-  },
-]
+const onSubmit = () => {
+    loading.value = true
+    // console.log(formInline)
+    httpRequest.get<RetMap>({
+    url: '/api/tokenClaimed',
+    params: formInline
+  })
+    .then((res) => {
+      console.log(res) 
+      count.value = res.data.total
+      tableData.value = res.data.data
+      loading.value = false
+    })
+}
+const tableData: Ref<TokenClaimed[]> = ref([])
 </script>
 
 <style>

@@ -1,7 +1,7 @@
 <template>
   <div class="outer">
     <div class="table">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" >
         <el-table-column type="expand">
           <template #default="props">
             <div m="5">
@@ -16,8 +16,10 @@
         <el-table-column prop="timestamp" label="Timestamp" />
         <el-table-column prop="amountIn" label="amountIn" />
         <el-table-column prop="fee" label="Fee" />
-        <el-table-column prop="chainName" label="Tag" />
+        <el-table-column prop="chainName" label="Tag" width="110" fixed="right" />
       </el-table>
+
+      <el-pagination small layout="prev, pager, next" :total="count" v-model:current-page="currentPage" @update:current-page="onSubmit"/>
     </div>
 
     <div class="qform">
@@ -32,7 +34,7 @@
             <el-option label="bsc" value="bsc" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Activity time">
+        <el-form-item label="Date range">
           <el-date-picker v-model="formInline.timestamps" type="daterange" placeholder="Pick a date" clearable date-format="YYYY/MM/DD"/>
         </el-form-item>
         <el-form-item>
@@ -42,26 +44,36 @@
     </div>
   </div>
 
-
-
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, type Ref } from 'vue';
 import  httpRequest  from '@/axios'
-import type { ResponseModel } from '@/types';
 
+const loading = ref(false)
+
+onMounted(()=>{
+  onSubmit()
+})
+
+const count = ref(10)
+const currentPage = ref(1)
 
 
 const formInline = reactive({
   destination: '',
   chainName: '',
-  timestamps: ''
+  timestamps: '',
+  currentPage
 })
 
 
 
-
+interface RetMap {
+  currentPage: number
+  total: number
+  data: TokenDeposited[]
+}
 
 interface TokenDeposited {
   timestamp: string
@@ -76,65 +88,20 @@ interface TokenDeposited {
 }
 
 const onSubmit = () => {
-  
-  console.log(formInline)
-
-  httpRequest.get<ResponseModel<TokenDeposited[]>[]>({
+  loading.value = true
+  httpRequest.get<RetMap>({
     url: '/api/tokenDeposited',
     params: formInline
   })
     .then((res) => {
-      console.log(res)
-      tableData.values = res.data
+      count.value = res.data.total
+      tableData.value = res.data.data
+      loading.value = false
     })
 }
 
-const tableData = reactive([
-  {
-    timestamp: '1715929285',
-    amountIn: 9,
-    fee: 100,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe',
-    sender: 'somesenderheresomesenderhere'
-  },
-  {
-    timestamp: '1715929285',
-    amountIn: 9,
-    fee: 100,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe',
-    sender: 'somesenderheresomesenderhere'
-  },
-  {
-    timestamp: '1715929285',
-    amountIn: 9,
-    fee: 100,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe',
-    sender: 'somesenderheresomesenderhere'
-  },
-  {
-    timestamp: '1715929285',
-    amountIn: 0,
-    fee: 100,
-    fromToken: 'No. 189, Grove St, Los Angeles',
-    toToken: 'sometotokenheresometotokenhere',
-    transactionHash: 'sometransactionhashheresometransactionhash',
-    chainName: 'mango',
-    destination: 'somedestinationheresomedestinationhe',
-    sender: 'somesenderheresomesenderhere'
-  },
-])
+
+const tableData: Ref<TokenDeposited[]> = ref([])
 </script>
 
 <style>

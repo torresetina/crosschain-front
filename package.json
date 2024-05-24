@@ -16,7 +16,8 @@
     "pinia": "^2.1.7",
     "qs": "^6.12.1",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.2",
+    "vue3-captcha-canvas": "^0.2.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",

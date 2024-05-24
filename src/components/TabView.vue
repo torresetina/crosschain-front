@@ -1,38 +1,80 @@
 <template>
-  <div class="outer" >
+  <div class="outer">
 
     <el-tabs type="border-card" class="demo-tabs" @tab-change="routerGo">
-    <el-tab-pane>
-      <template #label key="1">
-        <span> Token Deposited </span>
+      <el-tab-pane>
+        <template #label key="1">
+          <span> Token Deposited </span>
+        </template>
+        <RouterView />
+      </el-tab-pane>
+      <el-tab-pane>
+        <template #label key="2">
+          <span> Token Claimed </span>
+        </template>
+        <RouterView />
+      </el-tab-pane>
+    </el-tabs>
+    <el-dialog v-model="centerDialogVisible" title="Login" width="350" align-center class="login"
+      :show-close="showClose">
+      <div class="item">
+        <span class="s">UserName </span>
+        <el-input  type="text" placeholder="user name" v-model="userName" class="border" />
+      </div>
+
+      <div class="item" style="margin-top:2px;">
+        <span class="s">PassWord </span>
+        <el-input  type="password" placeholder="pass word" v-model="passWord" class="border" />
+      </div>
+
+      <div class="item" style="margin-top:2px">
+        <CaptchaImage ref="captchaRef"/>
+        <el-input 
+          placeholder="CAPTCHA"
+          v-model="captcha" 
+          onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+          @keyup.enter="login" 
+          class="border"
+        />
+        
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="login" style="margin-top: 30px;">
+            Login
+          </el-button>
+        </div>
       </template>
-      <RouterView />
-    </el-tab-pane>
-    <el-tab-pane>
-      <template #label key="2">
-        <span> Token Claimed </span>
-      </template>
-      <RouterView />
-    </el-tab-pane>
-  </el-tabs>
+    </el-dialog>
+
+    <el-button plain @click="centerDialogVisible = true">
+      Click to open the Dialog
+    </el-button>
 
   </div>
-
-
-
-
-
-
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { CaptchaImage } from 'vue3-captcha-canvas'
+
+const captcha = ref("")
+const userName = ref("")
+const passWord = ref("")
+
+const showClose = false
 
 const router = useRouter();
 const tabName = ref('2')
 
+const centerDialogVisible = ref(false)
 
+const login = () => {
+  console.log(passWord.value)
+  console.log(userName.value)
+}
 
 const routerGo = (TabPaneName: string) => {
   switch (TabPaneName) {
@@ -69,5 +111,28 @@ const routerGo = (TabPaneName: string) => {
 .outer {
   width: 85%;
   margin: 0 auto;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-content: stretch;
+  align-items: center;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.s {
+  width: 40%;
+}
+
+.border {
+  margin: 6px 30px
 }
 </style>

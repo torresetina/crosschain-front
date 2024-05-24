@@ -32,6 +32,12 @@ export default defineConfig({
         ws: false,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/api/tokenClaimed': {
+        target: 'http://localhost:8080',
+        ws: false,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }
