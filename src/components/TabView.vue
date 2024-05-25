@@ -28,7 +28,7 @@
       </div>
 
       <div class="item" style="margin-top:2px">
-        <CaptchaImage ref="captchaRef"/>
+        <CaptchaImage ref="captchaRef" class="s" />
         <el-input 
           placeholder="CAPTCHA"
           v-model="captcha" 
@@ -36,7 +36,7 @@
           @keyup.enter="login" 
           class="border"
         />
-        
+        <span style="color: red;" v-show="captchaValidate">*</span>
       </div>
 
       <template #footer>
@@ -48,9 +48,9 @@
       </template>
     </el-dialog>
 
-    <el-button plain @click="centerDialogVisible = true">
+    <!-- <el-button plain @click="centerDialogVisible = true">
       Click to open the Dialog
-    </el-button>
+    </el-button> -->
 
   </div>
 </template>
@@ -58,7 +58,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { RouterLink, RouterView, useRouter } from 'vue-router'
+//@ts-ignore
 import { CaptchaImage } from 'vue3-captcha-canvas'
+
+const captchaRef = ref()
+
+const captchaValidate = ref(false)
 
 const captcha = ref("")
 const userName = ref("")
@@ -74,6 +79,13 @@ const centerDialogVisible = ref(false)
 const login = () => {
   console.log(passWord.value)
   console.log(userName.value)
+  if (! captchaRef.value.verify(captcha.value, true)) {
+    captchaValidate.value = true
+    return
+  } else {
+    captchaValidate.value = false
+  }
+
 }
 
 const routerGo = (TabPaneName: string) => {
@@ -129,7 +141,7 @@ const routerGo = (TabPaneName: string) => {
 }
 
 .s {
-  width: 40%;
+  width: 87%;
 }
 
 .border {
