@@ -35,19 +35,17 @@
 </template>
 
 <script lang="ts" setup >
-import { inject, reactive, ref } from 'vue';
+import { getCurrentInstance, inject, reactive, ref, type ComponentInternalInstance } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 //@ts-ignore
 import { CaptchaImage } from 'vue3-captcha-canvas'
 import router from '@/router';
 import httpRequest from '@/axios';
 import type { TypeAssertion } from 'typescript';
+import { getCookie, setCookie } from './utils/cookies';
 
-import { useCookies } from 'vue3-cookies';
 const c1 = ref(30)
 const captchaRef = ref()
-
-const cookies = useCookies()
 
 
 
@@ -105,6 +103,14 @@ const submitForm = (formEl: FormInstance | undefined) => {
     formEl.validate((valid) => {
         if (valid) {
             console.log("login!")
+            if ((getCookie("userName") === undefined) || 
+                (getCookie("token") === undefined)
+        ) {
+                console.log("set cookies")
+                setCookie("userName",formLoginData.userName)
+                setCookie("token","someTokenFromBackend")
+            }
+            router.push("tab")
         } else {
             alert("error")
         }

@@ -1,3 +1,5 @@
+import { getCookie } from '@/components/utils/cookies'
+import { getCurrentInstance, type ComponentInternalInstance } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 
@@ -6,7 +8,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'login',
       component: () => import("@/components/Login.vue")
     },
     {
@@ -16,6 +18,18 @@ const router = createRouter({
     },
 
   ]
+})
+
+const isAuthenticated = (): boolean => {
+  return !(getCookie('token') === undefined)
+}
+
+router.beforeEach((to, from, next) => {
+  if(!isAuthenticated() && to.name !== 'login') {
+    next("/")
+  } else {
+    next()
+  }
 })
 
 export default router
