@@ -18,7 +18,8 @@
     "qs": "^6.12.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2",
-    "vue3-captcha-canvas": "^0.2.1"
+    "vue3-captcha-canvas": "^0.2.1",
+    "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",

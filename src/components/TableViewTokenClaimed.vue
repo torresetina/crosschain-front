@@ -60,9 +60,10 @@ import { tokenDecimalsMap, tokenNameMap } from './utils/tokens';
 import converter from './utils/converter';
 const currentPage = ref(1)
 const count = ref(10)
-
 const disabled = ref(false)
 const loading = ref(false)
+
+
 
 const formInline = reactive({
   transactionHash: '',
@@ -72,12 +73,11 @@ const formInline = reactive({
   currentPage
 })
 
-onMounted(()=> {
-  onSubmit()
-})
+// onMounted(()=> {
+//   onSubmit()
+// })
 
 function useHash():void{
-  // console.log("-------------------------useHash------------------")
   if(formInline.transactionHash == '') {
     disabled.value = false
   } else {
