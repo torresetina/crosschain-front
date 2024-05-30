@@ -60,9 +60,9 @@ import { tr } from 'element-plus/es/locales.mjs';
 
 const loading = ref(false)
 
-// onMounted(()=>{
-//   onSubmit()
-// })
+onMounted(()=>{
+  onSubmit()
+})
 
 const count = ref(10)
 const currentPage = ref(1)

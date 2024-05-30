@@ -38,6 +38,12 @@ export default defineConfig({
         ws: false,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/api/login': {
+        target: 'http://localhost:8080',
+        ws: false,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

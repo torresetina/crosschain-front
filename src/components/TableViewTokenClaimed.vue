@@ -73,9 +73,9 @@ const formInline = reactive({
   currentPage
 })
 
-// onMounted(()=> {
-//   onSubmit()
-// })
+onMounted(()=> {
+  onSubmit()
+})
 
 function useHash():void{
   if(formInline.transactionHash == '') {

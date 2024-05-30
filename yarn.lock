@@ -623,7 +623,7 @@ delayed-stream@~1.0.0:
 
 element-plus@^2.7.3:
   version "2.7.3"
-  resolved "https://registry.npmjs.org/element-plus/-/element-plus-2.7.3.tgz"
+  resolved "https://registry.yarnpkg.com/element-plus/-/element-plus-2.7.3.tgz#2266af776927110ad0d347211acbd914159eda20"
   integrity sha512-OaqY1kQ2xzNyRFyge3fzM7jqMwux+464RBEqd+ybRV9xPiGxtgnj/sVK4iEbnKnzQIa9XK03DOIFzoToUhu1DA==
   dependencies:
     "@ctrl/tinycolor" "^3.4.1"

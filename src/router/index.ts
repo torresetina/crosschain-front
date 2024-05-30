@@ -24,11 +24,9 @@ const isAuthenticated = (): boolean => {
   return !(getCookie('token') === undefined)
 }
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   if(!isAuthenticated() && to.name !== 'login') {
-    next("/")
-  } else {
-    next()
+    return {name: 'login'}
   }
 })
 

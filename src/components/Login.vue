@@ -24,10 +24,13 @@
                 <CaptchaImage ref="captchaRef" class="s" :contentHeight="c1" />
                 <el-input v-model="formLoginData.captcha" style="width: 420px; margin-left: 20px;" />
             </el-form-item>
+            <el-alert title="Wrong User Name or Password" type="error" effect="light" v-if="alertShow"/>
+
             <el-form-item style="margin-top: 20px; float: right; margin-right: 40px">
                 <el-button type="primary" @click="submitForm(formDataRef)">LOGIN</el-button>
             </el-form-item>
         </el-form>
+
     </el-card>
 </div>
    
@@ -46,7 +49,7 @@ import { getCookie, setCookie } from './utils/cookies';
 
 const c1 = ref(30)
 const captchaRef = ref()
-
+const alertShow = ref(false)
 
 
 
@@ -81,10 +84,6 @@ const validateCaptcha = (rule: any, value: any, callback: any) => {
 
 }
 
-interface RetMap {
-    userName: string
-    token: string
-}
 
 const formLoginData = reactive({
     userName: '',
@@ -105,10 +104,24 @@ const submitForm = (formEl: FormInstance | undefined) => {
             console.log("login!")
             if ((getCookie("userName") === undefined) || 
                 (getCookie("token") === undefined)
-        ) {
-                console.log("set cookies")
-                setCookie("userName",formLoginData.userName)
-                setCookie("token","someTokenFromBackend")
+        ) { 
+                httpRequest.post<string>({
+                    url: '/api/login',
+                    data: {
+                        userName: formLoginData.userName,
+                        password: formLoginData.password,
+                    }
+                })
+                .then( (res) => {
+                    if (! res.success) {
+                        alertShow.value = true
+                        return
+                    }
+                    alertShow.value = false
+                    setCookie("userName", formLoginData.userName)
+                    setCookie("token", res.data)
+                    router.push("tab")
+                })
             }
             router.push("tab")
         } else {
