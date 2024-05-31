@@ -6,13 +6,14 @@
         <template #label key="1">
           <span> Token Deposited </span>
         </template>
-        <TableViewTokenClaimed />
+        <TableViewTokenDeposited />
       </el-tab-pane>
       <el-tab-pane>
         <template #label key="2">
           <span> Token Claimed </span>
         </template>
-        <TableViewTokenDeposited />
+
+        <TableViewTokenClaimed />
       </el-tab-pane>
     </el-tabs>
   </div>
